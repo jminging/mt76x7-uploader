@@ -1,4 +1,4 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 from optparse import OptionParser
 import serial
@@ -22,13 +22,13 @@ parser.add_option("-t", dest="target", help="target to be flashed (cm4 | ldr | n
 (opt, args) = parser.parse_args()
 
 if opt.target != 'cm4' and opt.target != 'n9' and opt.target != 'ldr':
-    print >> sys.stderr, "\nError: Invalid parameter!! Please specify the target to be flashed.\n"
+    print("\nError: Invalid parameter!! Please specify the target to be flashed.\n", file=sys.stderr)
     parser.print_help()
     sys.exit(-1)
     pass
 
 if opt.platform != 'mt7687' and opt.platform != 'mt7697':
-    print >> sys.stderr, "\nError: Invalid platform is assigned. Only mt7687 and mt7697 are supported.\n"
+    print("\nError: Invalid platform is assigned. Only mt7687 and mt7697 are supported.\n", file=sys.stderr)
     parser.print_help()
     sys.exit(-1)
     pass
@@ -45,16 +45,16 @@ if not opt.da_file:
     pass
 
 if not opt.bin_path or not opt.com_port:
-    print >> sys.stderr, "\nError: Invalid parameter!! Please specify the COM port and the bin file.\n"
+    print("\nError: Invalid parameter!! Please specify the COM port and the bin file.\n", file=sys.stderr)
     parser.print_help()
     sys.exit(-1)
 
 if not os.path.exists(opt.bin_path):
-    print >> sys.stderr, "\nError: Bin file [ %s ] not found !!!\n" % (opt.bin_path)
+    print("\nError: Bin file [ %s ] not found !!!\n" % (opt.bin_path), file=sys.stderr)
     sys.exit(-1)
 
 if not os.path.exists(da_path):
-    print >> sys.stderr, "\nError: DA file [ %s ] not found !!!\n" % (da_path)
+    print("\nError: DA file [ %s ] not found !!!\n" % (da_path), file=sys.stderr)
     sys.exit(-1)
 
 s = serial.Serial()
@@ -83,7 +83,7 @@ def resetIntoBootloader():
 
     pass
 
-#print >> sys.stderr, "Please push the Reset button"
+#print("Please push the Reset button", file=sys.stderr)
 
 error_count = 0
 c_count = 0
@@ -95,18 +95,18 @@ while 1:
     s.flushInput()
 
     if debug:
-        print >> sys.stderr, "Read: "+c.encode('hex')
+        print("Read: "+c.encode('hex'), file=sys.stderr)
         pass
-    if c == "C":
-        c_count  = c_count +1
-    if c!=0 and c!="C":
+    if c==b"C":
+        c_count = c_count +1
+    if c!=0 and c!=b"C":
         error_count = error_count +1
     if c_count>1:
-        print >> sys.stderr, "Start uploading the download agent"
+        print("Start uploading the download agent", file=sys.stderr)
         break
         pass
     if error_count>3:
-        print "Error - Not reading the start flag"
+        print("Error - Not reading the start flag", file=sys.stderr)
         retry  = retry +1
         error_count = 0
         c_count = 0
@@ -115,7 +115,7 @@ while 1:
         time.sleep(0.3)
         resetIntoBootloader()
     if time.time() - start_time > 3.0:
-        print "Error - Timeout"
+        print("Error - Timeout")
         retry  = retry +1
         error_count = 0
         c_count = 0
@@ -124,7 +124,7 @@ while 1:
         resetIntoBootloader()
         pass
     if retry>3:
-        print "Exiting"
+        print("Exiting")
         sys.exit(-1)
         pass
 
@@ -143,7 +143,7 @@ def putc_user(data, timeout=1):
     return s.write(data)
 
 def pgupdate(read, total):
-    print "\r%d/%d bytes (%2.f%%) ..." % (read, total, read*100/total)
+    print("\r%d/%d bytes (%2.f%%) ..." % (read, total, read*100/total))
 
 m = xmodem.XMODEM(getc, putc, mode='xmodem1k')
 
@@ -151,16 +151,16 @@ stream = open(da_path, 'rb')
 m.send(stream)
 s.baudrate = 115200*8
 
-print >> sys.stderr, "DA uploaded, start uploading the user bin"
+print("DA uploaded, start uploading the user bin", file=sys.stderr)
 time.sleep(1)
 if opt.target == 'ldr':
-    s.write("1\r")
+    s.write(b"1\r")
     pass
 if opt.target == 'n9':
-    s.write("3\r")
+    s.write(b"3\r")
     pass
 if opt.target == 'cm4':
-    s.write("2\r")
+    s.write(b"2\r")
     pass
 s.flush()
 s.flushInput()
@@ -168,7 +168,7 @@ s.flushInput()
 flag = 1
 while flag:
     c = s.read()
-    if c =='C':
+    if c == b'C':
         flag = 0
         pass
     pass
@@ -181,9 +181,9 @@ stream = open(opt.bin_path, 'rb')
 m = xmodem.XMODEM(getc, putc_user, mode='xmodem1k')
 m.send(stream)
 
-print >> sys.stderr, "\nBin file uploaded. The board reboots now."
+print("\nBin file uploaded. The board reboots now.", file=sys.stderr)
 time.sleep(1)
-s.write("C\r")
+s.write(b"C\r")
 s.flush()
 s.flushInput()
 

@@ -5,7 +5,7 @@ This tool provides the functionality to flash the bootloader and the firmware of
 Official GitHub repository: https://github.com/MediaTek-Labs/mt76x7-uploader
 
 ## Features
- * Supports Windows, macOS, and Linux (based on Python 2.7)
+ * Supports Windows, macOS, and Linux (based on Python 3)
  * Supports MT7687 and MT7697
  * Flashes bootloader, CM4(application binary), and N9 firmware sections.
 
