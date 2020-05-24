@@ -8,9 +8,6 @@ import logging
 import pyprind
 import platform
 
-da87_path = './da87.bin'
-da97_path = './da97.bin'
-
 logging.basicConfig()
 parser = OptionParser(usage="python %prog [options]")
 parser.add_option("-c", dest="com_port", help="COM port, can be COM1, COM2, ..., COMx")
@@ -39,9 +36,9 @@ da_path = opt.da_file
 
 if not opt.da_file:
     if opt.platform == 'mt7697':
-        da_path = './da97.bin'
+        da_path = os.path.dirname(os.path.realpath(__file__))+'/da97.bin'
     elif opt.platform == 'mt7687':
-        da_path = './da87.bin'
+        da_path = os.path.dirname(os.path.realpath(__file__))+'/da87.bin'
     pass
 
 if not opt.bin_path or not opt.com_port:
