@@ -1,0 +1,15 @@
+{
+  "name": "tool-mt76x7-uploader",
+  "version": "1.4",
+  "description": "MT76x7 firmware upload tool",
+  "keywords": [
+    "upload tools",
+    "upload system"
+  ],
+  "homepage": "https://github.com/MediaTek-Labs/mt76x7-uploader",
+  "license": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jminging/mt76x7-uploader"
+  }
+}
